@@ -1,0 +1,105 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #fc1e8a;
+  user-select: none;
+}
+
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.875rem;
+  padding: 2.5rem 3.75rem;
+  background-image: linear-gradient(
+    325deg,
+    #03001e 0%,
+    #7303c0 30%,
+    #ec38bc 70%,
+    #fdeff9 100%
+  );
+}
+
+.container > h2 {
+  font-size: 3rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+}
+
+.game {
+  position: relative;
+  width: 26.875rem;
+  height: 26.875rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  transform-style: preserve-3d;
+  perspective: 31.25rem;
+}
+
+.game-over::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  content: "Você venceu o jogo!";
+  color: #ffd700;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000a6;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.item {
+  position: relative;
+  width: 6.25rem;
+  height: 6.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  font-size: 3rem;
+  transform: rotateY(180deg);
+  transition: 0.25s;
+}
+
+.item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: #404040;
+  transition: 0.25s;
+  transform: rotateY(0);
+  backface-visibility: hidden;
+}
+
+.item.box-open {
+  transform: rotateY(0deg);
+}
+
+.box-open::after {
+  transform: rotateY(180deg);
+}
+
+.reset {
+  padding: 0.9375rem 1.25rem;
+  width: 100%;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  font-size: 1.5rem;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.reset:focus {
+  color: #ec38bc;
+  background-color: #262809;
+}
