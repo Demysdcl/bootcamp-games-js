@@ -32,7 +32,7 @@ shuffleEmojis.forEach((emoji) => {
 });
 
 function handleClick() {
-  if (openCards.length < 2) {
+  if (openCards.length < 2 && !this.classList.contains("box-open")) {
     this.classList.add("box-open");
     openCards.push(this);
   }
