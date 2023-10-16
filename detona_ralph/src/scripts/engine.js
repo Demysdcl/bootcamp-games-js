@@ -6,6 +6,8 @@ const state = {
     score: document.querySelector("#score"),
     lives: document.querySelector("#lives"),
     play: document.querySelector(".play"),
+    results: document.querySelector(".results"),
+    resultScore: document.querySelector(".results h3"),
   },
   values: {
     hitPosition: 0,
@@ -20,44 +22,48 @@ const state = {
   },
 };
 
+const { actions, values, view } = state;
+
 function playGame() {
-  state.actions.countDownTimerId = setInterval(countDown, 1000);
-  state.actions.timerId = setInterval(positionEnemy, 800);
-  state.view.play.style.visibility = "hidden";
-  state.view.score.textContent = 0;
-  state.view.timeLeft.textContent = 60;
-  state.view.lives.textContent = 3;
-  state.values.initialized = true;
+  actions.countDownTimerId = setInterval(countDown, 1000);
+  view.results.classList.remove("show");
+  actions.timerId = setInterval(positionEnemy, 800);
+  view.play.style.visibility = "hidden";
+  view.score.textContent = 0;
+  view.timeLeft.textContent = 60;
+  view.lives.textContent = 3;
+  values.initialized = true;
 }
 
 function gameOver() {
-  clearInterval(state.actions.countDownTimerId);
-  clearInterval(state.actions.timerId);
+  clearInterval(actions.countDownTimerId);
+  clearInterval(actions.timerId);
   setTimeout(() => {
-    state.values.initialized = false;
-    alert("Game Over! O seu resultado foi:" + state.values.score);
-    state.values.currentTime = 60;
-    state.values.lives = 3;
-    state.values.score = 0;
-    state.view.play.style.visibility = "visible";
+    values.initialized = false;
+    view.results.classList.add("show");
+    view.resultScore.innerHTML = `score: ${values.score}`;
+    values.currentTime = 60;
+    values.lives = 3;
+    values.score = 0;
+    view.play.style.visibility = "visible";
   }, 300);
 }
 
 function countDown() {
-  state.view.timeLeft.textContent = --state.values.currentTime;
+  view.timeLeft.textContent = --values.currentTime;
 
-  if (state.values.currentTime <= 0) {
+  if (values.currentTime <= 0) {
     gameOver();
   }
 }
 
 function positionEnemy() {
-  state.view.squares.forEach((square) => square.classList.remove("enemy"));
+  view.squares.forEach((square) => square.classList.remove("enemy"));
 
   const randomId = Math.floor(Math.random() * 9);
-  const randomSquare = state.view.squares[randomId];
+  const randomSquare = view.squares[randomId];
   randomSquare.classList.add("enemy");
-  state.values.hitPosition = randomSquare.id;
+  values.hitPosition = randomSquare.id;
 }
 
 function playSound(name) {
@@ -67,26 +73,24 @@ function playSound(name) {
 }
 
 function increaseScore() {
-  state.view.score.textContent = ++state.values.score;
-  state.values.hitPosition = null;
+  view.score.textContent = ++values.score;
   playSound("hit");
+  values.hitPosition = null;
 }
 
 function descreaseLife() {
-  state.view.lives.textContent = `x${--state.values.lives}`;
+  view.lives.textContent = `x${--values.lives}`;
   playSound("fail");
-  if (state.values.lives <= 0) {
+  if (values.lives <= 0) {
     gameOver();
   }
 }
 
 function addListenerHitBox() {
-  state.view.squares.forEach((square) => {
+  view.squares.forEach((square) => {
     square.addEventListener("mousedown", () => {
-      if (state.values.initialized) {
-        square.id === state.values.hitPosition
-          ? increaseScore()
-          : descreaseLife();
+      if (values.initialized) {
+        square.id === values.hitPosition ? increaseScore() : descreaseLife();
       }
     });
   });
