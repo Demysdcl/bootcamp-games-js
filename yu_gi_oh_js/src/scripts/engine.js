@@ -13,6 +13,7 @@ const state = {
     player: document.getElementById("player-field-card"),
     computer: document.getElementById("computer-field-card"),
   },
+
   button: document.getElementById("next-duel"),
 };
 
@@ -56,14 +57,10 @@ function getRandomCardId() {
   return Math.floor(Math.random() * cardData.length);
 }
 
-function setCardsField(randonId) {
-  console.log("clicked", randonId);
-}
-
 function drawDefaultCard() {
   cardSprites.avatar.src = `${ICONS_PATH}/card-back.png`;
-  cardSprites.name.innerText = "Selecione";
-  cardSprites.type.innerText = `uma carta`;
+  cardSprites.name.innerText = "Select";
+  cardSprites.type.innerText = `a card`;
 }
 
 function drawSelectedCard(index) {
@@ -71,6 +68,72 @@ function drawSelectedCard(index) {
   cardSprites.avatar.src = img;
   cardSprites.name.innerText = name;
   cardSprites.type.innerText = `Attribute: ${type}`;
+}
+
+function removeAllCard() {
+  const cards = document.querySelectorAll(".card-box img");
+  cards.forEach((item) => item.remove());
+}
+
+function playAudio(result) {
+  if (result !== "Draw") {
+    const audio = new Audio(`./src/assets/audios/${result.toLowerCase()}.wav`);
+    audio.play();
+    audio.volume = 0.2;
+  }
+}
+
+function checkDuelResult(playerCard, computerCard) {
+  if (playerCard.WinOf.includes(computerCard.id)) {
+    score.playerScore++;
+    return "Win";
+  }
+
+  if (playerCard.LoseOf.includes(computerCard.id)) {
+    score.computerScore++;
+    return "Lose";
+  }
+
+  return "Draw";
+}
+
+function updateScore() {
+  score.scoreBox.innerText = `Win: ${score.playerScore} | Lose: ${score.computerScore}`;
+}
+
+function drawButton(result) {
+  button.style.display = "block";
+  button.innerText = result;
+}
+
+function setCardsFieldDisplay(display) {
+  fieldCards.player.style.display = display;
+  fieldCards.computer.style.display = display;
+}
+
+function setCardsFieldImages(playerCard, computerCard) {
+  fieldCards.player.src = playerCard.img;
+  fieldCards.computer.src = computerCard.img;
+}
+
+function setCardsField(cardId) {
+  removeAllCard();
+
+  setCardsFieldDisplay("block");
+
+  const computerCardId = getRandomCardId();
+
+  const computerCard = cardData[computerCardId];
+  const playerCard = cardData[cardId];
+
+  setCardsFieldImages(playerCard, computerCard);
+
+  const duelResult = checkDuelResult(playerCard, computerCard);
+
+  playAudio(duelResult);
+  updateScore(duelResult);
+  drawButton(duelResult);
+  drawDefaultCard();
 }
 
 async function createCardImage(fieldSide) {
@@ -99,8 +162,18 @@ async function drawCards(cardNumbers, fieldSide) {
 }
 
 function init() {
+  setCardsFieldDisplay("none");
   drawCards(5, playersKey.player);
   drawCards(5, playersKey.computer);
+
+  const bgm = document.getElementById("bgm");
+  bgm.play();
+}
+
+function resetDuel() {
+  init();
+  drawDefaultCard();
+  button.style.display = "none";
 }
 
 init();
